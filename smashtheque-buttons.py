@@ -3,6 +3,7 @@ import discord
 from discord.ui import Button, View
 from discord.ui.item import ItemCallbackType
 from discord.ext import commands
+import aiohttp
 
 messages = ["""**__Rôles Leboncoin Smashthèque__**
 Réagissez aux commandes de votre choix pour vous assigner un rôle!
@@ -58,8 +59,8 @@ Le rôle <@&738953314237939783> / <@&738952955495186528> vous est automatiquemen
 Vous pouvez aussi utiliser ce bouton afin de synchroniser vos donnés discord sur votre profil smashthèque (comme votre photo de profil)
 """]
 
-BOT_TOKEN = os.environ.get('BOT_TOKEN')
-BEARER_TOKEN = os.environ.get('BEARER_TOKEN')
+BOT_TOKEN = os.environ.get('PRIVATE_BOT_TOKEN')
+BEARER_TOKEN = os.environ.get('SMASHTHEQUE_API_TOKEN')
 
 roles = [777960675150528513]
 headers = {"Authorization": f"Bearer {BEARER_TOKEN}", "Content-Type": "application/json"}
@@ -147,18 +148,15 @@ class PersistantButtonsThird(View):
         role_id = 798305000316600350
         await add_role(interaction, role_id, self.bot)
 
-"""
-code for the final button
-it doesn't work
 class PersistantButtonFourth(View):
     def __init__(self, bot):
         self.bot = bot
         super().__init__(timeout=None)
         self.session = aiohttp.ClientSession(headers=headers)
 
-    @discord.ui.button(label="Rafraîchir mon profil", style=discord.ButtonStyle.green, custom_id="role_button:RefreshProfile", emoji=discord.PartialEmoji(id=861654611236225054, name="sync"))
+    @discord.ui.button(label="Rafraîchir mon profil", style=discord.ButtonStyle.green, custom_id="role_button:RefreshProfile", emoji=discord.PartialEmoji(id=867082118063849472, name="emoji_reload"))
     async def RefreshProfile(self, button: discord.ui.Button, interaction: discord.Integration):
-        async with self.session.get(f'https://smashtheque.fr/api/v1/discord_users/{interaction.user.id}/refetch') as resp:
+        async with self.session.get(f'https://www.smashtheque.fr/api/v1/discord_users/{interaction.user.id}/refetch') as resp:
             if resp.status == 404:
                 await interaction.response.send_message(f"Vous n'êtes pas enregistrés dans la smashthèque !\nVous pouvez vous enregistrer sur https://smashtheque.fr/users/me, où en suivant les instructions dans <#750022794007412746>.", ephemeral=True)
             elif resp.status == 200:
@@ -167,8 +165,6 @@ class PersistantButtonFourth(View):
                 await interaction.response.send_message(f"Il y a eu un problème durant la mise à jour de votre profil.", ephemeral=True)
                 await self.bot.get_channel(747201417454026802).send(f"Il y a eu un problème durant la mise à jour d'un profil. Traceback : \nutilisateur : {interaction.user}\nID utilisateur : {interaction.user.id}\nstatus code : {resp.status}\nréponse : {resp}")
 
-
-"""
 
 
 class ApplicationsTeam(Button):
@@ -188,7 +184,7 @@ class SmashthequeRoles(commands.Bot):
             self.add_view(PersistantButtonsFirst(self))
             self.add_view(PersistantButtonsSecond(self))
             self.add_view(PersistantButtonsThird(self))
-            #self.add_view(PersistantButtonFourth(self))
+            self.add_view(PersistantButtonFourth(self))
             self.persistent_views_added = True
 
 
@@ -203,5 +199,6 @@ async def setupmessages(ctx: commands.context):
     await channel.send(messages[0], view=PersistantButtonsFirst(bot))
     await channel.send(messages[1], view=PersistantButtonsSecond(bot))
     await channel.send(messages[2], view=PersistantButtonsThird(bot))
+    await channel.send(messages[3], view=PersistantButtonFourth(bot))
 
 bot.run(BOT_TOKEN)
