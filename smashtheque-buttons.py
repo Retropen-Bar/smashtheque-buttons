@@ -56,7 +56,7 @@ Je prends le rôle <@&798305000316600350> **si je suis un TO qui a l'intention d
 <:etoile:743286485930868827> = **Candidature TO Charte du fair-play**""", """
 **__Synchronisation de mon profil__**
 Le rôle <@&738953314237939783> / <@&738952955495186528> vous est automatiquement ajouté si vous êtes notés comme TO d'au moins un tournois. Si vous êtes TO d'un tournois, mais n'avez pas le rôle, cliquez sur le bouton ci dessous pour rafraîchir vos rôles.
-Vous pouvez aussi utiliser ce bouton afin de synchroniser vos donnés discord sur votre profil smashthèque (comme votre photo de profil)
+Vous pouvez aussi utiliser ce bouton afin de synchroniser vos données discord sur votre profil smashthèque (comme votre photo de profil)
 """]
 
 BOT_TOKEN = os.environ.get('PRIVATE_BOT_TOKEN')
